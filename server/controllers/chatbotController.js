@@ -1,14 +1,22 @@
 const axios = require('axios');
+const Sentiment = require('sentiment');
+const sentiment = new Sentiment();
 
 const processMessage = async (req, res) => {
   const userMessage = req.body.message;
+  const sentimentResult = sentiment.analyze(userMessage);
 
   try {
+    // Adjust response tone based on sentiment score
+    const prompt = sentimentResult.score < 0
+      ? `The user seems upset. Respond in a calming, understanding manner: ${userMessage}`
+      : userMessage;
+
     const response = await axios.post(
       'https://api.openai.com/v1/completions',
       {
         model: 'text-davinci-003',
-        prompt: userMessage,
+        prompt: prompt,
         max_tokens: 100,
       },
       {
@@ -20,7 +28,7 @@ const processMessage = async (req, res) => {
     );
 
     const botResponse = response.data.choices[0].text.trim();
-    res.json({ message: botResponse });
+    res.json({ message: botResponse, sentiment: sentimentResult });
   } catch (error) {
     console.error('Error with Chatbot API', error);
     res.status(500).json({ error: 'Internal server error' });

@@ -1,0 +1,23 @@
+.chat-window {
+    max-width: 500px;
+    margin: auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    height: 400px;
+    overflow-y: auto;
+  }
+  
+  .user-message {
+    text-align: right;
+    color: blue;
+  }
+  
+  .bot-message {
+    text-align: left;
+    color: green;
+  }
+  
+  input, button {
+    margin: 5px;
+  }
+  
