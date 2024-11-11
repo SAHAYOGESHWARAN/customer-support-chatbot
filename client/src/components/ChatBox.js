@@ -12,7 +12,19 @@ function ChatBox() {
 
     try {
       const response = await axios.post('http://localhost:5000/api/chatbot/message', { message: userMessage });
-      setMessages([...newMessages, { sender: 'bot', text: response.data.message }]);
+      const botMessage = response.data.message;
+      const sentimentScore = response.data.sentiment.score;
+
+      const sentimentLabel = sentimentScore > 0
+        ? '😊 Positive'
+        : sentimentScore < 0
+          ? '😟 Negative'
+          : '😐 Neutral';
+
+      setMessages([
+        ...newMessages,
+        { sender: 'bot', text: botMessage, sentiment: sentimentLabel }
+      ]);
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -23,7 +35,10 @@ function ChatBox() {
       <div className="chat-window">
         {messages.map((msg, index) => (
           <div key={index} className={msg.sender === 'user' ? 'user-message' : 'bot-message'}>
-            {msg.text}
+            <p>{msg.text}</p>
+            {msg.sender === 'bot' && msg.sentiment && (
+              <small className="sentiment">{msg.sentiment}</small>
+            )}
           </div>
         ))}
       </div>
