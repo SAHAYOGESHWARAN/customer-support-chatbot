@@ -4,20 +4,24 @@ const axios = require('axios');
 const sentiment = new Sentiment();
 
 const processMessage = async (req, res) => {
-  const userMessage = req.body.message;
-  const sentimentResult = sentiment.analyze(userMessage);
-
-  // Check if the message matches an FAQ
-  const faqResponse = faqs.find(faq =>
-    userMessage.toLowerCase().includes(faq.question.toLowerCase())
-  );
-
-  if (faqResponse) {
-    // Respond with FAQ answer if found
-    return res.json({ message: faqResponse.answer, sentiment: sentimentResult });
-  }
-
   try {
+    const userMessage = req.body.message;
+    if (!userMessage) {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+
+    const sentimentResult = sentiment.analyze(userMessage);
+
+    // Check if the message matches an FAQ
+    const faqResponse = faqs.find(faq =>
+      userMessage.toLowerCase().includes(faq.question.toLowerCase())
+    );
+
+    if (faqResponse) {
+      // Respond with FAQ answer if found
+      return res.json({ message: faqResponse.answer, sentiment: sentimentResult });
+    }
+
     const prompt = sentimentResult.score < 0
       ? `The user seems upset. Respond in a calming, understanding manner: ${userMessage}`
       : userMessage;
@@ -36,6 +40,10 @@ const processMessage = async (req, res) => {
         },
       }
     );
+
+    if (!response.data.choices || !response.data.choices[0]) {
+      throw new Error('Invalid response from OpenAI API');
+    }
 
     const botResponse = response.data.choices[0].text.trim();
     res.json({ message: botResponse, sentiment: sentimentResult });
