@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
+const connectDB = require('./config/db');
+const chatbotRoutes = require('./routes/chatbotRoutes');
 
 const app = express();
 app.use(cors());
