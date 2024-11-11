@@ -5,32 +5,6 @@
     border: 1px solid #ccc;
     height: 400px;
     overflow-y: auto;
-  }
-  
-  .user-message {
-    text-align: right;
-    color: blue;
-  }
-  
-  .bot-message {
-    text-align: left;
-    color: green;
-  }
-  
-  input, button {
-    margin: 5px;
-  }
-  .sentiment {
-    font-size: 0.8em;
-    color: #888;
-  }
-.chat-window {
-    max-width: 500px;
-    margin: auto;
-    padding: 10px;
-    border: 1px solid #ccc;
-    height: 400px;
-    overflow-y: auto;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
@@ -59,4 +33,6 @@ input, button {
     font-size: 0.8em;
     color: #888;
     font-style: italic;
-}  
+}
+
+/* Removed duplicate styles */
