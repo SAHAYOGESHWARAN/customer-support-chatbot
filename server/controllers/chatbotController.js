@@ -1,13 +1,23 @@
-const axios = require('axios');
+const faqs = require('../models/faq');
 const Sentiment = require('sentiment');
+const axios = require('axios');
 const sentiment = new Sentiment();
 
 const processMessage = async (req, res) => {
   const userMessage = req.body.message;
   const sentimentResult = sentiment.analyze(userMessage);
 
+  // Check if the message matches an FAQ
+  const faqResponse = faqs.find(faq =>
+    userMessage.toLowerCase().includes(faq.question.toLowerCase())
+  );
+
+  if (faqResponse) {
+    // Respond with FAQ answer if found
+    return res.json({ message: faqResponse.answer, sentiment: sentimentResult });
+  }
+
   try {
-    // Adjust response tone based on sentiment score
     const prompt = sentimentResult.score < 0
       ? `The user seems upset. Respond in a calming, understanding manner: ${userMessage}`
       : userMessage;
