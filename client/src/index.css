@@ -35,3 +35,26 @@ input, button {
     font-style: italic;
 }
 
+.user-message {
+    text-align: right;
+    background-color: #d1e7dd;
+  }
+  
+  .bot-message {
+    text-align: left;
+    background-color: #f8d7da;
+  }
+  
+  /* Color indicators for sentiment */
+  .bot-message.positive {
+    background-color: #d4edda;
+  }
+  
+  .bot-message.neutral {
+    background-color: #fdfd96;
+  }
+  
+  .bot-message.negative {
+    background-color: #f8d7da;
+  }
+  
