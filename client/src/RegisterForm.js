@@ -4,17 +4,23 @@ import axios from 'axios';
 function RegisterForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/auth/register', {
+      const response = await axios.post('http://localhost:5000/api/auth/register', {
         username,
         password,
       });
-      alert('Registration successful. Please log in.');
+      setSuccess('Registration successful. Please log in.');
+      setError(null);
+      setUsername('');
+      setPassword('');
     } catch (error) {
-      console.error('Registration failed:', error);
+      setError('Registration failed: ' + error.message);
+      setSuccess(null);
     }
   };
 
@@ -35,6 +41,8 @@ function RegisterForm() {
         required
       />
       <button type="submit">Register</button>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {success && <p style={{ color: 'green' }}>{success}</p>}
     </form>
   );
 }
