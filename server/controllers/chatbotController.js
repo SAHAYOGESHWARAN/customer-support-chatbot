@@ -5,41 +5,40 @@ const sentiment = new Sentiment();
 
 const processMessage = async (req, res) => {
   try {
-    const userMessage = req.body.message;
-    if (!userMessage) {
+    const { message } = req.body;
+    if (!message) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    const sentimentResult = sentiment.analyze(userMessage);
+    const sentimentResult = sentiment.analyze(message);
 
-    // Check if the message matches an FAQ
     const faqResponse = faqs.find(faq =>
-      userMessage.toLowerCase().includes(faq.question.toLowerCase())
+      message.toLowerCase().includes(faq.question.toLowerCase())
     );
 
     if (faqResponse) {
-      // Respond with FAQ answer if found
       return res.json({ message: faqResponse.answer, sentiment: sentimentResult });
     }
 
     const prompt = sentimentResult.score < 0
-      ? `The user seems upset. Respond in a calming, understanding manner: ${userMessage}`
-      : userMessage;
+      ? `The user seems upset. Respond in a calming, understanding manner: ${message}`
+      : message;
 
-    const response = await axios.post(
-      'https://api.openai.com/v1/completions',
-      {
+    const openAiConfig = {
+      method: 'post',
+      url: 'https://api.openai.com/v1/completions',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      data: {
         model: 'text-davinci-003',
-        prompt: prompt,
+        prompt,
         max_tokens: 100,
       },
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    };
+
+    const response = await axios(openAiConfig);
 
     if (!response.data.choices || !response.data.choices[0]) {
       throw new Error('Invalid response from OpenAI API');
