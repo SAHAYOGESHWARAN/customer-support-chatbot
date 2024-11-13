@@ -4,9 +4,12 @@ import axios from 'axios';
 function LoginForm({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', {
         username,
@@ -14,7 +17,9 @@ function LoginForm({ onLogin }) {
       });
       onLogin(response.data.token);
     } catch (error) {
-      console.error('Login failed:', error);
+      setError('Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,7 +39,10 @@ function LoginForm({ onLogin }) {
         placeholder="Password"
         required
       />
-      <button type="submit">Login</button>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <button type="submit" disabled={loading}>
+        {loading ? 'Logging in...' : 'Login'}
+      </button>
     </form>
   );
 }
