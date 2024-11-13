@@ -7,6 +7,7 @@ import RegisterForm from './components/RegisterForm';
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [token, setToken] = useState(localStorage.getItem('token') || '');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (token) {
@@ -15,10 +16,14 @@ function App() {
     }
   }, [token]);
 
-  const handleLogin = (userToken) => {
-    localStorage.setItem('token', userToken);
-    setToken(userToken);
-    setIsAuthenticated(true);
+  const handleLogin = async (userToken) => {
+    try {
+      localStorage.setItem('token', userToken);
+      setToken(userToken);
+      setIsAuthenticated(true);
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   const handleLogout = () => {
@@ -27,7 +32,15 @@ function App() {
     setIsAuthenticated(false);
   };
 
-  
+  const handleRegister = async (userData) => {
+    try {
+      const response = await axios.post('/register', userData);
+      handleLogin(response.data.token);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
   return (
     <div className="App">
       <header>
@@ -42,7 +55,8 @@ function App() {
         ) : (
           <>
             <LoginForm onLogin={handleLogin} />
-            <RegisterForm />
+            <RegisterForm onRegister={handleRegister} />
+            {error && <p style={{ color: 'red' }}>{error}</p>}
           </>
         )}
       </main>
