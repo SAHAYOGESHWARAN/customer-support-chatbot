@@ -19,8 +19,8 @@ function ChatBox() {
     fetchInitialMessages();
   }, []);
 
-  const sendMessage = async () => {
-    if (loading) return;
+  const handleSendMessage = async () => {
+    if (loading || !userMessage.trim()) return;
     setLoading(true);
     try {
       const newMessages = [...messages, { sender: 'user', text: userMessage }];
@@ -48,6 +48,10 @@ function ChatBox() {
     }
   };
 
+  const handleInputChange = (e) => {
+    setUserMessage(e.target.value);
+  };
+
   return (
     <div>
       <div className="chat-window">
@@ -64,10 +68,10 @@ function ChatBox() {
       <input
         type="text"
         value={userMessage}
-        onChange={(e) => setUserMessage(e.target.value)}
+        onChange={handleInputChange}
         placeholder="Type your message..."
       />
-      <button onClick={sendMessage} disabled={loading}>
+      <button onClick={handleSendMessage} disabled={loading}>
         {loading ? 'Sending...' : 'Send'}
       </button>
     </div>
