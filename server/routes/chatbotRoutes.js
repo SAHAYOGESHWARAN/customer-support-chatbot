@@ -8,7 +8,4 @@ const { processMessage } = require('../controllers/chatbotController');
  */
 router.post('/message', processMessage);
 
-/**
- * Export the router to be used in the main application.
- */
 module.exports = router;
