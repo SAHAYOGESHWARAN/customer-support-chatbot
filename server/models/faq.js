@@ -17,6 +17,7 @@ const faqs = [
     answer: "Our return policy allows returns within 30 days of purchase with a valid receipt.",
     category: "Returns",
   },
+  
 ];
 
 module.exports = faqs;
